@@ -3,7 +3,7 @@
     <h1>Users Page</h1>
     <ul>
       <li v-for="user of users" :key="user.id">
-        <a @click.prevent="openUser(user)" href="#">{{ user.name }}</a>
+        <a @click.prevent="openUser(user.id)" href="#">{{ user.name }}</a>
       </li>
     </ul>
   </section>
@@ -12,13 +12,22 @@
 <script>
 export default {
   // preloading data from backend
-  async asyncData ({ $axios }) {
-    const users = await $axios.$get('https://jsonplaceholder.typicode.com/users')
-    return { users }
-  },
+  // async asyncData ({ $axios }) {
+  //   const users = await $axios.$get('https://jsonplaceholder.typicode.com/users')
+  //   return { users }
+  // },
   data () {
     return {
-      users: []
+    }
+  },
+  computed: {
+    users () {
+      return this.$store.getters['users/users']
+    }
+  },
+  async fetch ({ store }) {
+    if (store.getters['users/users'].length === 0) {
+      await store.dispatch('users/fetch')
     }
   },
   methods: {
